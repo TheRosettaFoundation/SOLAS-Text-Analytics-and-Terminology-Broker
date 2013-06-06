@@ -29,7 +29,7 @@ class TAMain{
   
   void run(){
     TAHelper helper = new TAHelper();
-    var timer = new Timer.periodic(new Duration(seconds:1), (e)=>helper.processJobs());
+    var timer = new Timer.periodic(new Duration(seconds:conf.app.pollingInterval), (e)=>helper.processJobs());
   }
 
 }

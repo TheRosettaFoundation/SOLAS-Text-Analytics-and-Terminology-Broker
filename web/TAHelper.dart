@@ -8,24 +8,31 @@ class TAHelper{
   
   void processJobs(){
     downloadJobs().then((e)=>e.forEach((i)=>processJob(i)));
-    print("hi ");
   }
   
-  void processJob(String str) {
-    print(str);
+  void processJob(String jobid) {
+    downloadJob(jobid);
   }
+  
+  downloadJob(String jobid)=>print(jobid);
   
   Future<List> downloadJobs() {
     TAMain app = new TAMain();
 //    HttpRequest.getString("${app.conf.locconnectUrl}fetch_job.php").then((jobs)=>parseJobs(jobs));
-    Future<List> ret = HttpRequest.getString("${app.conf.locconnectUrl}fetch_job.php").then((jobs)=>new Future.value((parseJobs(jobs))));
+    Future<List> ret = HttpRequest.getString("${app.conf.urls.locconnect}fetch_job.php/?com=${app.conf.app.comName}").then((jobs)=>new Future.value((parseJobs(jobs))));
    return ret;
 
   }
   
   List<String> parseJobs(String jobs) {
-//    var xml = XML.parse(jobs);
-    return new List<String>.filled(5, "test");
+    List ret = new List();
+    try{
+      var xml = XML.parse(jobs);
+      XmlCollection jobNodes =xml.queryAll("job");
+      
+      jobNodes.forEach((XmlElement e)=> ret.add(e.text));
+    }catch(e){}
+    return ret;
   }
   
   
