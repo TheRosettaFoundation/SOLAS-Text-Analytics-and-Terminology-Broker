@@ -4,6 +4,7 @@ import 'tabroker.dart';
 import 'LocconnectHelper.dart';
 import 'dart:async';
 import 'dart:html';
+import 'ProgressEnum.dart';
 
 class TAHelper{
   
@@ -12,6 +13,8 @@ class TAHelper{
   }
   
   void processJob(String jobid) {
+    LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING);
+    LocconnectHelper.setFeedback(jobid, "testing").then((HttpRequest responce)=>print(responce.responseText));
     downloadJob(jobid);
   }
   

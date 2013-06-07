@@ -2,6 +2,7 @@ import 'package:xml/xml.dart';
 import 'dart:async';
 import 'dart:html';
 import 'tabroker.dart';
+import 'dart:json';
 
 
 
@@ -21,10 +22,11 @@ class LocconnectHelper{
 
   }
   
-  static Future<String> setStatus(String jobid,String progressEnum) {
+  static Future<HttpRequest> setStatus(String jobid,String progressEnum) {
     TAMain app = new TAMain();
-    Future<String> ret = HttpRequest.getString("${app.conf.urls.locconnect}set_status.php/?com=${app.conf.app.comName}&id=$jobid&msg=$progressEnum");
-   return ret;
+    var data = "{'com':'${app.conf.app.comName}','id':'$jobid', msg:'$progressEnum'}";
+    var url = "${app.conf.urls.locconnect}set_status.php";
+    return HttpRequest.request(url, method:"POST",sendData:data);
 
   }
   
@@ -35,21 +37,26 @@ class LocconnectHelper{
 
   }
   
-  static Future<String> setFeedback(String jobid,String feedback) {
+  static Future<HttpRequest> setFeedback(String jobid,String feedback) {
     TAMain app = new TAMain();
-    Future<String> ret = HttpRequest.getString("${app.conf.urls.locconnect}send_feedback.php/?com=${app.conf.app.comName}&id=$jobid&msg=$feedback");
-   return ret;
-
+    var data = {"com":app.conf.app.comName,"id":jobid,"msg":feedback};
+//    var data = "{'com':'${app.conf.app.comName}','id':'$jobid', msg:'$feedback'}";
+    
+    data=stringify(data);
+    var url = "${app.conf.urls.locconnect}send_feedback.php";
+    var req = new HttpRequest();
+    req.open("POST",url,async:false);
+    //req.setRequestHeader('Content-type','application/json');
+    req.send(data);
+    print(req.responseText);
+   return HttpRequest.request(url, method:"POST",sendData:data);
   }
   
-  static Future<String> sendOutput(String jobid,String output) {
+  static Future<HttpRequest> sendOutput(String jobid,String output) {
     TAMain app = new TAMain();
-    HttpRequest request = new HttpRequest();
-    request.open("post", "${app.conf.urls.locconnect}send_output.php",true);
-    request.send("{'com'='${app.conf.app.comName}','id':'$jobid', data:'$output'}");
-    
-    Future<String> ret = HttpRequest.getString("${app.conf.urls.locconnect}send_output.php/?com=${app.conf.app.comName}&id=$jobid&data=$output");
-   return ret;
+    var data = "{'com':'${app.conf.app.comName}','id':'$jobid', data:'$output'}";
+    var url = "${app.conf.urls.locconnect}send_output.php";
+   return HttpRequest.request(url, method:"POST",sendData:data);
 
   }
   
