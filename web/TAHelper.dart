@@ -13,7 +13,7 @@ class TAHelper{
   }
   
   void processJob(String jobid) {
-    LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING);
+    LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING).then((HttpRequest responce)=>print(responce.responseText));
     LocconnectHelper.setFeedback(jobid, "testing").then((HttpRequest responce)=>print(responce.responseText));
     downloadJob(jobid);
   }

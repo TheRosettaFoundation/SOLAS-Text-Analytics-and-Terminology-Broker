@@ -25,8 +25,8 @@ class LocconnectHelper{
   static Future<HttpRequest> setStatus(String jobid,String progressEnum) {
     TAMain app = new TAMain();
     var data = "{'com':'${app.conf.app.comName}','id':'$jobid', msg:'$progressEnum'}";
-    var url = "${app.conf.urls.locconnect}set_status.php";
-    return HttpRequest.request(url, method:"POST",sendData:data);
+    var url = "${app.conf.urls.locconnect}set_status.php/?com=${app.conf.app.comName}&id=$jobid&msg=$progressEnum";
+    return HttpRequest.request(url, method:"POST");
 
   }
   
@@ -39,17 +39,8 @@ class LocconnectHelper{
   
   static Future<HttpRequest> setFeedback(String jobid,String feedback) {
     TAMain app = new TAMain();
-    var data = {"com":app.conf.app.comName,"id":jobid,"msg":feedback};
-//    var data = "{'com':'${app.conf.app.comName}','id':'$jobid', msg:'$feedback'}";
-    
-    data=stringify(data);
-    var url = "${app.conf.urls.locconnect}send_feedback.php";
-    var req = new HttpRequest();
-    req.open("POST",url,async:false);
-    //req.setRequestHeader('Content-type','application/json');
-    req.send(data);
-    print(req.responseText);
-   return HttpRequest.request(url, method:"POST",sendData:data);
+    var url = "${app.conf.urls.locconnect}send_feedback.php/?com=${app.conf.app.comName}&id=$jobid&msg=$feedback";
+   return HttpRequest.request(url, method:"POST");
   }
   
   static Future<HttpRequest> sendOutput(String jobid,String output) {
