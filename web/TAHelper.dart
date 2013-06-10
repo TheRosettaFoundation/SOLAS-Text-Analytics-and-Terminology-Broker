@@ -15,10 +15,11 @@ class TAHelper{
   void processJob(String jobid) {
     LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING).then((HttpRequest responce)=>print(responce.responseText));
     LocconnectHelper.setFeedback(jobid, "testing").then((HttpRequest responce)=>print(responce.responseText));
-    downloadJob(jobid);
+    downloadJob(jobid).then((e)=>print(jobid));
+    LocconnectHelper.setStatus(jobid, ProgressEnum.PENDING).then((HttpRequest responce)=>print(responce.responseText));
   }
   
-  downloadJob(String jobid)=>print(jobid);
+  downloadJob(String jobid)=>LocconnectHelper.downloadJob(jobid);
   
   Future<List> downloadJobs() {
     TAMain app = new TAMain();
