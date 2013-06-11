@@ -1,4 +1,4 @@
-library TABroker.Providers;
+library TABroker;
 import 'package:xml/xml.dart';
 import 'dart:async';
 import 'dart:html';
@@ -15,19 +15,19 @@ class Tilde extends IProvider {
 
   String processFile(String jobid,String text) {
     if(text==null||text=="")return text;
-    LocconnectHelper.setFeedback(jobid, "sending file for external processing").then((HttpRequest responce)=>print(responce.responseText));
+    LocconnectHelper.setFeedback(jobid, "sending file for external processing").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText));
      if(text.startsWith("<content>")){
        text=text.replaceFirst("<content>", "");
        text=text.substring(0,text.lastIndexOf("</content>"));
      }
-     print(text);
+//     print(text);
 //     var xml = XML.parse(text);    
      TAMain app = new TAMain();
      var url = "http://taws.tilde.com/api/xliff";
      HttpRequest request = new HttpRequest();
      request.open("POST", url, async: false);
      request.send(text);
-     LocconnectHelper.setFeedback(jobid, "external processing complete").then((HttpRequest responce)=>print(responce.responseText));
+     LocconnectHelper.setFeedback(jobid, "external processing complete").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText));
      return request.responseText;
   }
   

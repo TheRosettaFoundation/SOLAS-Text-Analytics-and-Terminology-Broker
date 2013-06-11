@@ -18,17 +18,17 @@ class TAHelper{
   void processJob(String jobid) {
    LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING)
    .then((HttpRequest responce){
-     print(responce.responseText);
+     TAMain.ouputText(responce.responseText);
      IProvider service = new Tilde();
      LocconnectHelper.setFeedback(jobid, "the job is now being process")
      .then((HttpRequest re){
-         print(re.responseText); 
+       TAMain.ouputText(re.responseText); 
          downloadJob(jobid)
          .then((e){
              LocconnectHelper.sendOutput(jobid,service.processFile(jobid,e))
              .then((e)=>LocconnectHelper.setFeedback(jobid, "processing complete"))
              .then((e)=>LocconnectHelper.setStatus(jobid, ProgressEnum.COMPLETE))
-             .then((HttpRequest responce)=>print(responce.responseText));
+             .then((HttpRequest responce)=>TAMain.ouputText(responce.responseText));
          });
      });
      
@@ -38,8 +38,8 @@ class TAHelper{
   }
   
   downloadJob(String jobid){
-    LocconnectHelper.setFeedback(jobid, "downloading job file").then((HttpRequest responce)=>print(responce.responseText));
-    return LocconnectHelper.downloadJob(jobid).then((e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>print(responce.responseText)));
+    LocconnectHelper.setFeedback(jobid, "downloading job file").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText));
+    return LocconnectHelper.downloadJob(jobid).then((e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText)));
   }
   
   Future<List> downloadJobs() {
@@ -59,6 +59,8 @@ class TAHelper{
     }catch(e){}
     return ret;
   }
+  
+  
   
   
 }

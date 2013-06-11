@@ -32,5 +32,8 @@ class TAMain{
     TAHelper helper = new TAHelper();
     var timer = new Timer.periodic(new Duration(seconds:conf.app.pollingInterval), (e)=>helper.processJobs());
   }
-
+  static void ouputText(String str){
+    DivElement elem= query("#sample_container_id");
+    elem.children.add(new Element.html("<p>$str</p>"));
+  }
 }
