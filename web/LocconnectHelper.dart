@@ -1,3 +1,4 @@
+library TABroker;
 import 'package:xml/xml.dart';
 import 'dart:async';
 import 'dart:html';
@@ -48,8 +49,9 @@ class LocconnectHelper{
   
   static Future<HttpRequest> sendOutput(String jobid,String output) {
     TAMain app = new TAMain();
+    output=output==null?Uri.encodeComponent("<error><msg>internal failure. the output is empty</msg></error>"):Uri.encodeComponent(output);
     var data = "{'com':'${app.conf.app.comName}','id':'$jobid', data:'$output'}";
-    var url = "${app.conf.urls.locconnect}send_output.php/?com=${app.conf.app.comName}&id=$jobid&data=${Uri.encodeComponent(output)}";
+    var url = "${app.conf.urls.locconnect}send_output.php/?com=${app.conf.app.comName}&id=$jobid&data=$output";
    return HttpRequest.request(url, method:"POST",sendData:data);
 
   }

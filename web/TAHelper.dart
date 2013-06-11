@@ -1,10 +1,13 @@
+library TABroker;
 import 'package:xml/xml.dart';
 import 'dart:json';
 import 'tabroker.dart';
 import 'LocconnectHelper.dart';
 import 'dart:async';
 import 'dart:html';
+import 'IProvider.dart';
 import 'ProgressEnum.dart';
+import 'providers/Tilde.dart';
 
 class TAHelper{
   
@@ -13,13 +16,31 @@ class TAHelper{
   }
   
   void processJob(String jobid) {
-    LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING).then((HttpRequest responce)=>print(responce.responseText));
-    LocconnectHelper.setFeedback(jobid, "testing").then((HttpRequest responce)=>print(responce.responseText));
-    downloadJob(jobid).then((e)=>print(jobid));
-    LocconnectHelper.setStatus(jobid, ProgressEnum.PENDING).then((HttpRequest responce)=>print(responce.responseText));
+   LocconnectHelper.setStatus(jobid, ProgressEnum.PROCESSING)
+   .then((HttpRequest responce){
+     print(responce.responseText);
+     IProvider service = new Tilde();
+     LocconnectHelper.setFeedback(jobid, "the job is now being process")
+     .then((HttpRequest re){
+         print(re.responseText); 
+         downloadJob(jobid)
+         .then((e){
+             LocconnectHelper.sendOutput(jobid,service.processFile(jobid,e))
+             .then((e)=>LocconnectHelper.setFeedback(jobid, "processing complete"))
+             .then((e)=>LocconnectHelper.setStatus(jobid, ProgressEnum.COMPLETE))
+             .then((HttpRequest responce)=>print(responce.responseText));
+         });
+     });
+     
+     
+     
+   });
   }
   
-  downloadJob(String jobid)=>LocconnectHelper.downloadJob(jobid);
+  downloadJob(String jobid){
+    LocconnectHelper.setFeedback(jobid, "downloading job file").then((HttpRequest responce)=>print(responce.responseText));
+    return LocconnectHelper.downloadJob(jobid).then((e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>print(responce.responseText)));
+  }
   
   Future<List> downloadJobs() {
     TAMain app = new TAMain();
