@@ -1025,6 +1025,17 @@ $$.Closure$_nullDoneHandler = {"": "Closure;call$0,$name"};
 ["TABroker", "IProvider.dart", , {
 IProvider: {"": "Object;"}}],
 ["TABroker", "LocconnectHelper.dart", , {
+LocconnectHelper_encodeMap_closure: {"": "Closure;data_0",
+  call$1: function(k) {
+    var t1, t2;
+    t1 = $.Uri__uriEncode($.List_KIf, k, false);
+    t1 = $.stringReplaceAllUnchecked(t1, "%20", "+") + "=";
+    t2 = this.data_0;
+    t2 = $.Uri__uriEncode($.List_KIf, t2.$index(t2, k), false);
+    return t1 + $.stringReplaceAllUnchecked(t2, "%20", "+");
+  }
+},
+
 LocconnectHelper_downloadJobs: function() {
   var app, t1;
   if ($.TAMain__instance == null)
@@ -1048,42 +1059,51 @@ LocconnectHelper_downloadJob: function(jobid) {
 },
 
 LocconnectHelper_setStatus: function(jobid, progressEnum) {
-  var app, t1;
+  var app, data, url, t1;
   if ($.TAMain__instance == null)
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
   app.get$conf;
-  $.S(app._conf.get$app().get$comName());
-  $.S(jobid);
+  data = $.makeLiteralMap(["com", app._conf.get$app().get$comName(), "id", jobid, "msg", progressEnum]);
   app.get$conf;
-  t1 = $.S(app._conf.get$urls().get$locconnect()) + "set_status.php/?com=";
-  app.get$conf;
-  return $.HttpRequest_request(t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&msg=" + progressEnum, "POST", null, null, null, null, null, null);
+  url = $.S(app._conf.get$urls().get$locconnect()) + "set_status.php/";
+  t1 = $.LocconnectHelper_encodeMap(data);
+  return $.HttpRequest_request(url, "POST", null, null, $.makeLiteralMap(["Content-type", "application/x-www-form-urlencoded"]), null, t1, null);
 },
 
 LocconnectHelper_setFeedback: function(jobid, feedback) {
-  var app, t1;
+  var app, data, t1, url;
   if ($.TAMain__instance == null)
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
+  app.get$conf;
+  data = $.makeLiteralMap(["com", app._conf.get$app().get$comName(), "id", jobid, "msg", feedback]);
   app.get$conf;
   t1 = $.S(app._conf.get$urls().get$locconnect()) + "send_feedback.php/?com=";
   app.get$conf;
-  return $.HttpRequest_request(t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&msg=" + $.Uri__uriEncode($.List_KIf, feedback, false), "POST", null, null, null, null, null, null);
+  url = t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&msg=" + $.Uri__uriEncode($.List_KIf, feedback, false);
+  t1 = $.LocconnectHelper_encodeMap(data);
+  return $.HttpRequest_request(url, "POST", null, null, $.makeLiteralMap(["Content-type", "application/x-www-form-urlencoded"]), null, t1, null);
 },
 
 LocconnectHelper_sendOutput: function(jobid, output) {
-  var app, data, t1;
+  var app, data, url, t1;
   if ($.TAMain__instance == null)
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
-  output = output == null ? $.Uri__uriEncode($.List_KIf, "<error><msg>internal failure. the output is empty</msg></error>", false) : $.Uri__uriEncode($.List_KIf, output, false);
+  if (output == null)
+    output = $.Uri__uriEncode($.List_KIf, "<error><msg>internal failure. the output is empty</msg></error>", false);
   app.get$conf;
-  data = "{'com':'" + $.S(app._conf.get$app().get$comName()) + "','id':'" + $.S(jobid) + "', data:'" + output + "'}";
+  data = $.makeLiteralMap(["com", $.S(app._conf.get$app().get$comName()), "id", $.S(jobid), "data", $.S(output)]);
   app.get$conf;
-  t1 = $.S(app._conf.get$urls().get$locconnect()) + "send_output.php/?com=";
-  app.get$conf;
-  return $.HttpRequest_request(t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&data=" + output, "POST", null, null, null, null, data, null);
+  url = $.S(app._conf.get$urls().get$locconnect()) + "send_output.php/";
+  t1 = $.LocconnectHelper_encodeMap(data);
+  return $.HttpRequest_request(url, "POST", null, null, $.makeLiteralMap(["Content-type", "application/x-www-form-urlencoded"]), null, t1, null);
+},
+
+LocconnectHelper_encodeMap: function(data) {
+  var t1 = new $.MappedIterable(new $.LinkedHashMapKeyIterable(data), new $.LocconnectHelper_encodeMap_closure(data));
+  return t1.join$1(t1, "&");
 }}],
 ["TABroker", "TAHelper.dart", , {
 TAHelper: {"": "Object;",
@@ -5975,6 +5995,55 @@ IterableBase: {"": "Object;",
     for (t1 = this.get$iterator(this); t1.moveNext$0() === true;)
       f.call$1(t1.get$current());
   },
+  join$1: function(_, separator) {
+    var iterator, buffer, t1;
+    if (typeof separator !== "string")
+      return this.join$1$bailout(1, separator);
+    iterator = this.get$iterator(this);
+    if (iterator.moveNext$0() !== true)
+      return "";
+    buffer = new $.StringBuffer("");
+    buffer._contents = "";
+    if (separator === "")
+      do {
+        t1 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t1;
+      } while (iterator.moveNext$0() === true);
+    else {
+      t1 = $.S(iterator.get$current());
+      buffer._contents = buffer._contents + t1;
+      for (; iterator.moveNext$0() === true;) {
+        buffer._contents = buffer._contents + separator;
+        t1 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t1;
+      }
+    }
+    return buffer._contents;
+  },
+  join$1$bailout: function(state0, separator) {
+    var iterator, buffer, t1, str, t2;
+    iterator = this.get$iterator(this);
+    if (iterator.moveNext$0() !== true)
+      return "";
+    buffer = new $.StringBuffer("");
+    buffer._contents = "";
+    if (separator == null || $.$eq(separator, ""))
+      do {
+        t1 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t1;
+      } while (iterator.moveNext$0() === true);
+    else {
+      t1 = $.S(iterator.get$current());
+      buffer._contents = buffer._contents + t1;
+      for (t1 = typeof separator === "string"; iterator.moveNext$0() === true;) {
+        str = t1 ? separator : $.S(separator);
+        buffer._contents = buffer._contents + str;
+        t2 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t2;
+      }
+    }
+    return buffer._contents;
+  },
   toList$1$growable: function(_, growable) {
     return $.List_List$from(this, growable);
   },
@@ -7137,22 +7206,48 @@ StringBuffer: {"": "Object;_contents@",
   },
   writeAll$2: function(objects, separator) {
     var iterator, str;
+    if (typeof separator !== "string")
+      return this.writeAll$2$bailout(1, objects, separator);
     iterator = $.get$iterator$ax(objects);
-    if (!iterator.moveNext$0())
+    if (iterator.moveNext$0() !== true)
       return;
-    if (separator.length === 0)
+    if ($.JSString_methods.get$isEmpty(separator))
       do {
-        str = iterator._liblib0$_current;
+        str = iterator.get$current();
         str = typeof str === "string" ? str : $.S(str);
         this._contents = this._contents + str;
-      } while (iterator.moveNext$0());
+      } while (iterator.moveNext$0() === true);
     else {
-      str = iterator._liblib0$_current;
+      str = iterator.get$current();
       str = typeof str === "string" ? str : $.S(str);
       this._contents = this._contents + str;
-      for (; iterator.moveNext$0();) {
+      for (; iterator.moveNext$0() === true;) {
         this._contents = this._contents + separator;
-        str = iterator._liblib0$_current;
+        str = iterator.get$current();
+        str = typeof str === "string" ? str : $.S(str);
+        this._contents = this._contents + str;
+      }
+    }
+  },
+  writeAll$2$bailout: function(state0, objects, separator) {
+    var iterator, str, t1;
+    iterator = $.get$iterator$ax(objects);
+    if (iterator.moveNext$0() !== true)
+      return;
+    if ($.get$isEmpty$asx(separator) === true)
+      do {
+        str = iterator.get$current();
+        str = typeof str === "string" ? str : $.S(str);
+        this._contents = this._contents + str;
+      } while (iterator.moveNext$0() === true);
+    else {
+      str = iterator.get$current();
+      str = typeof str === "string" ? str : $.S(str);
+      this._contents = this._contents + str;
+      for (t1 = typeof separator === "string"; iterator.moveNext$0() === true;) {
+        str = t1 ? separator : $.S(separator);
+        this._contents = this._contents + str;
+        str = iterator.get$current();
         str = typeof str === "string" ? str : $.S(str);
         this._contents = this._contents + str;
       }
@@ -7385,13 +7480,13 @@ HttpRequest_getString_closure: {"": "Closure;",
   }
 },
 
-HttpRequest_request_closure1: {"": "Closure;xhr_0",
+HttpRequest_request_closure: {"": "Closure;xhr_0",
   call$2: function(header, value) {
     this.xhr_0.setRequestHeader(header, value);
   }
 },
 
-HttpRequest_request_closure: {"": "Closure;completer_1,xhr_2",
+HttpRequest_request_closure0: {"": "Closure;completer_1,xhr_2",
   call$1: function(e) {
     var t1, t2, t3;
     t1 = this.xhr_2;
@@ -7415,7 +7510,7 @@ HttpRequest_request_closure: {"": "Closure;completer_1,xhr_2",
   }
 },
 
-HttpRequest_request_closure0: {"": "Closure;completer_3",
+HttpRequest_request_closure1: {"": "Closure;completer_3",
   call$1: function(e) {
     var t1 = this.completer_3;
     if (t1._isComplete)
@@ -7816,13 +7911,15 @@ HttpRequest_request: function(url, method, mimeType, onProgress, requestHeaders,
   completer = new $._AsyncCompleter(new $._FutureImpl(0, null), false);
   xhr = new XMLHttpRequest();
   $.open$3$async$x(xhr, method == null ? "GET" : method, url, true);
+  if (requestHeaders != null)
+    requestHeaders.forEach$1(requestHeaders, new $.HttpRequest_request_closure(xhr));
   t1 = new $._EventStream(xhr, $.EventStreamProvider_load._eventType, false);
-  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure(completer, xhr), t1._useCapture);
+  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure0(completer, xhr), t1._useCapture);
   t2 = t1._onData;
   if (t2 != null && !t1.get$isPaused())
     $.$$dom_addEventListener$3$x(t1._target, t1._eventType, t2, t1._useCapture);
   t1 = new $._EventStream(xhr, $.EventStreamProvider_error._eventType, false);
-  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure0(completer), t1._useCapture);
+  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure1(completer), t1._useCapture);
   t2 = t1._onData;
   if (t2 != null && !t1.get$isPaused())
     $.$$dom_addEventListener$3$x(t1._target, t1._eventType, t2, t1._useCapture);
