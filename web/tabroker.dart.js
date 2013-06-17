@@ -166,7 +166,14 @@ $$.EventException = {"": "Interceptor;name=",
   }
 };
 
-$$.EventTarget = {"": "Interceptor;"};
+$$.EventTarget = {"": "Interceptor;",
+  $$dom_addEventListener$3: function(receiver, type, listener, useCapture) {
+    return receiver.addEventListener(type, $.convertDartClosureToJS(listener, 1), useCapture);
+  },
+  $$dom_removeEventListener$3: function(receiver, type, listener, useCapture) {
+    return receiver.removeEventListener(type, $.convertDartClosureToJS(listener, 1), useCapture);
+  }
+};
 
 $$.FieldSetElement = {"": "Element;name=,type="};
 
@@ -1092,7 +1099,7 @@ LocconnectHelper_sendOutput: function(jobid, output) {
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
   if (output == null)
-    output = $.Uri__uriEncode($.List_KIf, "<error><msg>internal failure. the output is empty</msg></error>", false);
+    output = "<error><msg>internal failure. the output is empty</msg></error>";
   app.get$conf;
   data = $.makeLiteralMap(["com", $.S(app._conf.get$app().get$comName()), "id", $.S(jobid), "data", $.S(output)]);
   app.get$conf;
@@ -1114,8 +1121,11 @@ TAHelper: {"": "Object;",
     $.LocconnectHelper_setStatus(jobid, "processing").then$1(new $.TAHelper_processJob_closure(this, jobid));
   },
   downloadJob$1: function(jobid) {
+    var ret;
     $.LocconnectHelper_setFeedback(jobid, "downloading job file").then$1(new $.TAHelper_downloadJob_closure());
-    return $.LocconnectHelper_downloadJob(jobid).then$1(new $.TAHelper_downloadJob_closure0(jobid));
+    ret = $.LocconnectHelper_downloadJob(jobid);
+    ret.then$1(new $.TAHelper_downloadJob_closure0(jobid));
+    return ret;
   },
   downloadJobs$0: function() {
     if ($.TAMain__instance == null)

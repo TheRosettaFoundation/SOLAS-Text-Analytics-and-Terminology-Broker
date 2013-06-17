@@ -39,7 +39,9 @@ class TAHelper{
   
   downloadJob(String jobid){
     LocconnectHelper.setFeedback(jobid, "downloading job file").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText));
-    return LocconnectHelper.downloadJob(jobid).then((e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText)));
+    Future<String> ret =  LocconnectHelper.downloadJob(jobid);
+    ret.then((e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText)));
+    return ret;
   }
   
   Future<List> downloadJobs() {
